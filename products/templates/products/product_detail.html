@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} | Details{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <a href="{% url 'products:product_list' %}"
+        class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition">
+        &larr; Back to all products
+    </a>
+    <div class="flex gap-3">
+        <a href="{% url 'products:product_update' product.id %}"
+            class="bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-semibold px-4 py-2 rounded-lg border border-gray-300 transition">
+            ✏️ Edit
+        </a>
+        <a href="{% url 'products:product_delete' product.id %}"
+            class="bg-red-50 text-red-600 hover:bg-red-100 text-xs font-semibold px-4 py-2 rounded-lg border border-red-200 transition">
+            🗑️ Delete
+        </a>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
+
+        <div class="w-full h-80 md:h-[450px] bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+        </div>
+
+        <div class="flex flex-col justify-between">
+            <div>
+                {% if product.category %}
+                <span
+                    class="inline-block bg-indigo-100 text-indigo-800 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-3">
+                    {{ product.category.title }}
+                </span>
+                {% endif %}
+
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">
+                    {{ product.name }}
+                </h1>
+
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {% for tag in product.tags.all %}
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded border border-gray-200">
+                        #{{ tag.name }}
+                    </span>
+                    {% endfor %}
+                </div>
+
+                <div class="text-2xl font-black text-gray-900 mb-4">
+                    ${{ product.price }}
+                </div>
+
+                <hr class="border-gray-100 my-4">
+
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Product Description</h3>
+                <p class="text-gray-600 leading-relaxed text-sm mb-6">
+                    {{ product.description }}
+                </p>
+            </div>
+
+            <div
+                class="mt-6 pt-4 border-t border-gray-100 grid grid-cols-2 gap-4 text-xs text-gray-400 bg-gray-50 -mx-6 -mb-6 p-4 md:-mx-8 md:-mb-8">
+                <div>
+                    <span class="font-bold text-gray-500 block">Date Added:</span>
+                    {{ product.created_at|date:"M d, Y" }}
+                </div>
+                <div>
+                    <span class="font-bold text-gray-500 block">Stock Level:</span>
+                    <span class="font-semibold text-gray-700">{{ product.quantity }} units</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:col-span-2">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">
+            💬 Customer Reviews ({{ product.reviews.count }})
+        </h2>
+        <div class="space-y-4">
+            {% for review in product.reviews.all %}
+            <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-gray-800">{{ review.user_name }}</span>
+                    <span class="text-amber-500 font-bold text-xs">★ {{ review.rating }}/5</span>
+                </div>
+                <p class="text-gray-600 text-sm">{{ review.content }}</p>
+            </div>
+            {% empty %}
+            <p class="text-center py-8 text-gray-400 text-sm italic">No reviews yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-fit">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Add a Review</h3>
+        <form method="POST" class="space-y-4">
+            {% csrf_token %} <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Your Name</label>
+                {{ form.user_name }}
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating</label>
+                {{ form.rating }}
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Comment</label>
+                {{ form.content }}
+            </div>
+            <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150">
+                Submit Feedback
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete - {{ object.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm text-center">
+    <h1 class="text-xl font-bold mb-4">Delete Product</h1>
+    <p class="text-gray-600 mb-6">Are you sure you want to delete "{{ object.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded mr-2">Yes, delete</button>
+        <a href="{% url 'products:product_detail' object.id %}" class="px-4 py-2 border rounded">Cancel</a>
+    </form>
+</div>
+{% endblock %}
